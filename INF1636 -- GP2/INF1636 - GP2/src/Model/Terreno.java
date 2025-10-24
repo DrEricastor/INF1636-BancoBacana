@@ -68,7 +68,8 @@ class Terreno extends Propriedade {
      * Atualmente retorna um valor fixo (implementação temporária).
      * @return Valor do aluguel.
      */
-    public int calcularAluguel() {
+    @Override
+    public int calcularAluguel(int deslocamento) {
         return alugueis[numCasas];
     }
 

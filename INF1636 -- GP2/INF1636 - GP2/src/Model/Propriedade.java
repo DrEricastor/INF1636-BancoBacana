@@ -1,5 +1,7 @@
 package Model;
 
+import java.util.List;
+
 /**
  * Classe abstrata que representa uma propriedade no jogo de Banco Imobiliário.
  * Uma propriedade pode ser comprada por um jogador e possui um preço definido.
@@ -22,6 +24,16 @@ abstract class Propriedade extends Campo {
         this.preco = preco;
         this.dono = null;
     }
+
+    @Override
+    public void efeitoCasa(Jogador j, Baralho_SorteReves baralho, List<Jogador> jogadores, int posPrisao, int deslocamento) {
+    if (dono != null && dono != j) {
+        calcularAluguel(deslocamento);
+        int valorAluguel = calcularAluguel(deslocamento);
+        int dinheiroRemovido = j.atualizarSaldo(-valorAluguel);
+        dono.atualizarSaldo(dinheiroRemovido);
+    }
+}
 
     /**
      * Retorna o jogador que é dono da propriedade.
@@ -52,9 +64,9 @@ abstract class Propriedade extends Campo {
      * Calcula o valor do aluguel a ser pago quando um jogador cai nesta propriedade.
      * @return Valor do aluguel.
      */
-    public int calcularAluguel() {
+    public int calcularAluguel(int deslocamento) {
         //Definimos o  valor do aluguel de uma propriedade qualquer como 50 temporariamente, apenas para testes
-        return 50;
+        return -50;
     }
 
 

@@ -25,8 +25,9 @@ class Companhia extends Propriedade {
      * O valor é determinado pelo resultado de um dado multiplicado pelo multiplicador da companhia.
      * @return Valor do aluguel a ser pago.
      */
-    public int calcularAluguel(int[] dados) {
-        int valorDado = dados[0] + dados[1];
+    @Override 
+    public int calcularAluguel(int deslocamento) {
+        int valorDado = deslocamento;
         return valorDado * multiplicador;
     }
 }

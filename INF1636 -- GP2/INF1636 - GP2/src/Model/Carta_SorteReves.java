@@ -3,6 +3,16 @@ package Model;
 import java.util.List;
 
 class Carta_SorteReves {
+    private static int nextId = 0;
+
+
+    public enum TiposCarta {
+        NORMAL,
+        IR_PARA_CADEIA,
+        IR_PARA_PARTIDA,
+        SAIR_CADEIA,
+        APOSTA
+    }
     /*
      * A grande maioria das cartas de Sorte/Reves envolvem perder ou ganhar dinheiro, as poucas exceções sao:
      * 1. uma carta que te leva ao ponto de partida, e te faz ganhar 200. (movimentar naturalmente o jogador para ele receber os 200 do ponto de partida)
@@ -11,32 +21,40 @@ class Carta_SorteReves {
      * 4. carta de aposta com os outros jogadores, todo mundo perde 50 e o jogador ganha o total.
      * 
      */
+    
     private String texto;
     private int efeitoMonetario; //positivo se ganhar dinheiro, negativo se perder dinheiro
-    private int cartaDiferente; //0 se for carta normal, 1 se for ir para cadeia, 2 se for ir para ponto de partida, 3 se for sair da cadeia, 4 se for aposta
-    public Carta_SorteReves(String texto, int efeitoMonetario, int cartaDiferente) {
+    private TiposCarta tipoCarta; //0 se for carta normal, 1 se for ir para cadeia, 2 se for ir para ponto de partida, 3 se for sair da cadeia, 4 se for aposta
+    private int id; //identificador unico da carta
+    
+    public Carta_SorteReves(int id, String texto, int efeitoMonetario, TiposCarta cartaDiferente) {
+        this.id = id;
         this.texto = texto;
         this.efeitoMonetario = efeitoMonetario;
-        this.cartaDiferente = cartaDiferente;
+        this.tipoCarta = cartaDiferente;
+    }
+
+    public static Carta_SorteReves criarCarta(String texto, int efeitoMonetario, TiposCarta cartaDiferente) {
+        return new Carta_SorteReves(nextId++, texto, efeitoMonetario, cartaDiferente);
     }
 
     public void afetar(Jogador j, List<Jogador> jogadores) {
-        switch (cartaDiferente) {
-            case 0:
+        switch (tipoCarta) {
+            case NORMAL:
                 j.setSaldo(j.getSaldo() + efeitoMonetario);
                 break;
-            case 1:
+            case IR_PARA_CADEIA:
                 j.setPosicao(10); //10 é um valor MOCK, posição da cadeia
                 j.setPreso(true);
                 break;
-            case 2:
+            case IR_PARA_PARTIDA:
                 j.setPosicao(0); //posição do ponto de partida
                 j.setSaldo(j.getSaldo() + 200);; //ganha 200 ao passar pelo ponto de partida
                 break;
-            case 3:
+            case SAIR_CADEIA:
                 j.setQtdPasseLivre(j.getQtdPasseLivre()+1);
                 break;
-            case 4:
+            case APOSTA:
                 int totalPerdido = 0;
                 for (Jogador outroJogador : jogadores) {
                     if (outroJogador != j) {
@@ -61,8 +79,8 @@ class Carta_SorteReves {
     public String getTexto() {
         return texto;
     }
-    public int getCartaDiferente() {
-        return cartaDiferente;
+    public TiposCarta getTipoCarta() {
+        return tipoCarta;
     }
 
     public void setEfeitoMonetario(int efeitoMonetario) {
@@ -71,8 +89,8 @@ class Carta_SorteReves {
     public void setTexto(String texto) {
         this.texto = texto;
     }
-    public void setCartaDiferente(int cartaDiferente) {
-        this.cartaDiferente = cartaDiferente;
+    public void setTipoCarta(TiposCarta cartaDiferente) {
+        this.tipoCarta = cartaDiferente;
     }
 
 }

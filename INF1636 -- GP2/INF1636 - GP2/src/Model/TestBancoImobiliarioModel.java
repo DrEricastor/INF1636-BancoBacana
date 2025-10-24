@@ -88,12 +88,12 @@ public class TestBancoImobiliarioModel {
         int tamanhoTabuleiro = jogo.getTabuleiro().getCampos().size(); // No seu codigo atual,  5
 
         // Coloca o jogador perto do fim do tabuleiro para forçar a volta
-        jogadorA.setPosicao(tamanhoTabuleiro - 2); // Posicao 3 (de 0-4)
+        jogadorA.setPosicao(tamanhoTabuleiro - 1); // Posicao 3 (de 0-4)
         
         jogo.deslocarPiao(jogadorA, 4); // Anda 4 casas: da 3 -> 4 -> 0 -> 1 -> 2
         
         // A nova posicao esperada: (3 + 4) % 5 = 7 % 5 = 2
-        assertEquals(2, jogadorA.getPosicao());
+        assertEquals(3, jogadorA.getPosicao());
     }
     
     
@@ -122,7 +122,8 @@ public class TestBancoImobiliarioModel {
         jogo.deslocarPiao(jogadorA, 1);
      
 
-        assertTrue("Saldo deve diminuir apos pagar aluguel com 1 casa", jogadorA.getSaldo() < saldoInicialA);
+        assertTrue("Esperado:" + (saldoInicialA - ((Propriedade) jogo.getTabuleiro().getCampo(1)).calcularAluguel(1)) + 
+                "Real:" + jogadorA.getSaldo(), jogadorA.getSaldo() < saldoInicialA);
     }
     
     
@@ -308,8 +309,8 @@ public class TestBancoImobiliarioModel {
     	jogo.enviarParaPrisao(jogadorA);
     	
     	int[] dados = new int[2];
-    	dados[0] = 1;
-    	dados[1] = 1;
+    	dados[0] = 2;
+    	dados[1] = 2;
     	jogo.tentarSairDaPrisao(jogadorA, dados);
     	
     	assertFalse("Jogador deve sair da prisão por ter tirado dados iguais", jogadorA.estaPreso());
@@ -331,8 +332,8 @@ public class TestBancoImobiliarioModel {
 
         // Configura o cenario de falencia
         int posicaoAlvo = 1;
-        jogadorA.setPosicao(posicaoAlvo);
-        jogadorA.setSaldo(49); // Saldo baixo e insuficiente (aluguel está mockado como 50)
+        jogadorA.setPosicao(0);
+        jogadorA.setSaldo(1); // Saldo baixo e insuficiente (aluguel está mockado como 50)
 
         Terreno terreno = (Terreno) jogo.getTabuleiro().getCampo(posicaoAlvo);
         terreno.setDono(jogadorB);
@@ -342,14 +343,29 @@ public class TestBancoImobiliarioModel {
         int jogadoresAntes = jogo.getJogadores().size();
 
         // Açao: Pagar aluguel que leva a  falencia
-        jogo.pagarAluguel(jogadorA);
+        jogo.deslocarPiao(jogadorA, 1);
         
      
-        
+        System.out.println("Saldo Jogador A apos falencia: " + jogadorA.getSaldo());
         // Verificacoes
         assertEquals("Numero de jogadores deve diminuir em 1", jogadoresAntes - 1, jogo.getJogadores().size());
         assertFalse("Jogador falido nao deve mais estar na lista de jogadores", jogo.getJogadores().contains(jogadorA));
-        assertEquals("Dono do terreno deve receber o saldo restante do jogador falido", saldoInicialB + 49, jogadorB.getSaldo());
+        assertEquals("Dono do terreno deve receber o saldo restante do jogador falido", saldoInicialB + 1, jogadorB.getSaldo());
+    }
+
+    @Test
+    public void testPagarCompanhia() {
+        jogo.iniciarJogo();
+        Jogador jogadorA = jogo.getJogadores().get(0); // O que vai falir
+        Jogador jogadorB = jogo.getJogadores().get(1); // O proprietário
+
+        ((Companhia) (jogo.getTabuleiro().getCampo(5))).setDono(jogadorB); // da a companhia na pos 2 pro B
+
+        int deslocamento = 5;
+        jogadorA.setPosicao(0);
+        jogo.deslocarPiao(jogadorA, deslocamento);
+
+        assertEquals("Erro no saldo apos pagar companhia. ", 4000 - (deslocamento * 50), jogadorA.getSaldo());
     }
     
     

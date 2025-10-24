@@ -16,8 +16,12 @@ class Tabuleiro {
      * Construtor do tabuleiro.
      * Inicializa a lista de propriedades e adiciona terrenos de exemplo para testes.
      */
-    public Tabuleiro() {
-        campos = new ArrayList<>();
+    public Tabuleiro(List<Campo> campos) {
+        this.campos = campos;
+    }
+
+    public static Tabuleiro gerarTabuleiroPadrao() {
+        List<Campo> campos = new ArrayList<>();
         campos.add(new Campo(TipoCampo.PONTO_PARTIDA));
         campos.add(new Terreno("Leblon",100,50,
                 new int[]{6,30,90,270,400,500}));
@@ -79,9 +83,17 @@ class Tabuleiro {
                 new int[]{24,120,360,850,1025,1200}));
         campos.add(new Terreno("Brooklin",260,150,
                 new int[]{22,110,330,800,975,1150}));
-    
-    
-    
+
+        return new Tabuleiro(campos);
+    }
+
+    public int getPosicaoPrisao() {
+        for (int i = 0; i < campos.size(); i++) {
+            if (campos.get(i).tipo == TipoCampo.PRISAO) {
+                return i;
+            }
+        }
+        return -1; // Retorna -1 se a posição da prisão não for encontrada
     }
 
     /**

@@ -1,5 +1,7 @@
 package Model;
 
+import java.util.List;
+
 class Campo {
     public enum TipoCampo {
         TERRENO,            // 0: propriedade ou companhia
@@ -16,5 +18,30 @@ class Campo {
 
     public Campo(TipoCampo tipo) {
         this.tipo = tipo;
+    }
+
+    public void efeitoCasa(Jogador j, Baralho_SorteReves baralho, List<Jogador> jogadores, int posPrisao, int deslocamento) {
+        switch(tipo) {
+            case PONTO_PARTIDA:
+                j.atualizarSaldo(200); // jogador recebe 200 ao passar pelo ponto de partida
+                break;
+            case VAI_PARA_PRISAO:
+                j.setPosicao(posPrisao);
+                j.setPreso(true);
+                break;
+            case SORTE_REVES:
+                baralho.puxarCarta().afetar(j, jogadores);
+                break;
+            case PAGAR_IMPOSTO:
+                j.atualizarSaldo(-200);
+                break;
+            case RECEBER_DINHEIRO:
+                j.atualizarSaldo(200);
+                break;
+            default:
+                // terrenos ou companhias, prisao, e estacionamento nao tem efeito direto aqui
+                break;
+        }
+
     }
 }

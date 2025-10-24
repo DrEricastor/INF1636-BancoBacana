@@ -24,8 +24,12 @@ class Jogador {
     }
 
     public int atualizarSaldo(int valor) {
+        int mudança = valor;
         this.saldo += valor;
-        return saldo;
+        if (this.saldo < 0) { //nesse caso, valor foi garantidamente negativo
+            mudança = -valor + this.saldo;
+        }
+        return mudança;
     }
     
     
