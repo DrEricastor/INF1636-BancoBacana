@@ -22,6 +22,11 @@ class Jogador {
         this.posicao = 0;
         this.qtd_passe_livre = 0;
     }
+
+    public int atualizarSaldo(int valor) {
+        this.saldo += valor;
+        return saldo;
+    }
     
     
     public int getQtdPasseLivre() {
