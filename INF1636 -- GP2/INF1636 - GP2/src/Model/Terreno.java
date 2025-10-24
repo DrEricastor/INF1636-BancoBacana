@@ -6,6 +6,8 @@ package Model;
 class Terreno extends Propriedade {
     private int numCasas; //numero de casas construidas
     private int precoCasa; //preço para construir uma casa
+    private int[] alugueis; //array contendo os diferentes valores do aluguel de um terreno, dependendo do número de casas construídas
+
 
 
 
@@ -16,11 +18,13 @@ class Terreno extends Propriedade {
      * @param nome Nome do terreno.
      * @param preco Preço de compra do terreno.
      * @param precoCasa Preço para construir uma casa.
+     * @param alugueis os 6 valores de aluguel do terreno, dependendo do número de casas construídas (0 a 4) e hotel.
      */
-    public Terreno(String nome, int preco, int precoCasa) {
+    public Terreno(String nome, int preco, int precoCasa, int[] alugueis) {
         super(nome, preco);
         this.numCasas = 0;
         this.precoCasa = precoCasa;
+        this.alugueis = alugueis;
     }
     
     /**
@@ -65,8 +69,7 @@ class Terreno extends Propriedade {
      * @return Valor do aluguel.
      */
     public int calcularAluguel() {
-        
-        return 50;// usamos esse valor temporário como o cálculo do aluguel, se houver alguma casa construída.
+        return alugueis[numCasas];
     }
 
 }

@@ -5,7 +5,7 @@ package Model;
  * Uma propriedade pode ser comprada por um jogador e possui um preço definido.
  * Subclasses devem implementar o cálculo do aluguel.
  */
-abstract class Propriedade {
+abstract class Propriedade extends Campo {
     protected String nome;//nome da propriedade no tabuleiro
     protected Jogador dono; // jogador dono da propriedade (se for null, a propriedade n foi comprada)
     protected int preco; // preço de compra 
@@ -17,6 +17,7 @@ abstract class Propriedade {
      * @param preco Preço de compra da propriedade.
      */
     public Propriedade(String nome, int preco) {
+        super(TipoCampo.TERRENO);
         this.nome = nome;
         this.preco = preco;
         this.dono = null;

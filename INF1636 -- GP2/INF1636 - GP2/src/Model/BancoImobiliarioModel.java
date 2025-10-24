@@ -70,12 +70,17 @@ class BancoImobiliarioModel {
      * @param casas Número de casas a avançar.
      */
     public void deslocarPiao(Jogador jogador, int casas) {
-        int tamanhoTabuleiro = tabuleiro.getPropriedades().size();
+        int tamanhoTabuleiro = tabuleiro.getCampos().size();
         int novaPosicao = (jogador.getPosicao() + casas) % tamanhoTabuleiro;
         jogador.setPosicao(novaPosicao);
-        Jogador dono = tabuleiro.getPropriedade(novaPosicao).getDono();
-        if (dono != null && dono != jogador){
-        	pagarAluguel(jogador); // paga automaticamente caso o jogador caia em uma propriedade que tem um dono que não seja ele mesmo
+        Campo campoAtual = tabuleiro.getCampo(novaPosicao);
+
+        if (campoAtual instanceof Propriedade) {
+            Propriedade propriedadeAtual = (Propriedade) campoAtual;
+        	Jogador dono = propriedadeAtual.getDono();
+            if (dono != null && dono != jogador){
+                pagarAluguel(jogador); // paga automaticamente caso o jogador caia em uma propriedade que tem um dono que não seja ele mesmo
+            }
         }
     }
 
@@ -85,11 +90,14 @@ class BancoImobiliarioModel {
      * @param jogador Jogador que deseja comprar a propriedade.
      */
     public void comprarPropriedade(Jogador jogador) {
-        Propriedade prop = tabuleiro.getPropriedade(jogador.getPosicao());
-        if (prop != null && prop.getDono() == null) {
-            if (jogador.getSaldo() >= prop.getPreco()) {
-                jogador.setSaldo(jogador.getSaldo() - prop.getPreco());
-                prop.setDono(jogador);
+        Campo campoAtual = tabuleiro.getCampo(jogador.getPosicao());
+        if (campoAtual instanceof Propriedade) {
+            Propriedade prop = (Propriedade) campoAtual;
+            if (prop != null && prop.getDono() == null) {
+                if (jogador.getSaldo() >= prop.getPreco()) {
+                    jogador.setSaldo(jogador.getSaldo() - prop.getPreco());
+                    prop.setDono(jogador);
+                }
             }
         }
     }
@@ -99,9 +107,9 @@ class BancoImobiliarioModel {
      * @param jogador Jogador que deseja construir a casa.
      */
     public void construirCasa(Jogador jogador) {
-        Propriedade prop = tabuleiro.getPropriedade(jogador.getPosicao());
-        if (prop instanceof Terreno) {
-            Terreno terreno = (Terreno) prop;
+        Campo campoAtual = tabuleiro.getCampo(jogador.getPosicao());
+        if (campoAtual instanceof Terreno) {
+            Terreno terreno = (Terreno) campoAtual;
             if (terreno.getDono() == jogador) {
                 if (jogador.getSaldo() >= terreno.getPrecoCasa()) {
                     jogador.setSaldo(jogador.getSaldo() - terreno.getPrecoCasa());
@@ -117,17 +125,20 @@ class BancoImobiliarioModel {
      * @param pagador Jogador que deve pagar o aluguel.
      */
     public void pagarAluguel(Jogador pagador) {
-        Propriedade prop = tabuleiro.getPropriedade(pagador.getPosicao());
-        if (prop != null && prop.getDono() != null && prop.getDono() != pagador) {
-            int aluguel = prop.calcularAluguel();
-            if (aluguel > 0) {
-                if (pagador.getSaldo() >= aluguel) {
-                    pagador.setSaldo(pagador.getSaldo() - aluguel);
-                    prop.getDono().setSaldo(prop.getDono().getSaldo() + aluguel);
-                } else {
-                    prop.getDono().setSaldo(prop.getDono().getSaldo() + pagador.getSaldo());
-                    pagador.setSaldo(0);
-                    jogadores.remove(pagador);
+        Campo campoAtual = tabuleiro.getCampo(pagador.getPosicao());
+        if (campoAtual instanceof Propriedade) {
+            Propriedade prop = (Propriedade) campoAtual;
+            if (prop != null && prop.getDono() != null && prop.getDono() != pagador) {
+                int aluguel = prop.calcularAluguel();
+                if (aluguel > 0) {
+                    if (pagador.getSaldo() >= aluguel) {
+                        pagador.setSaldo(pagador.getSaldo() - aluguel);
+                        prop.getDono().setSaldo(prop.getDono().getSaldo() + aluguel);
+                    } else {
+                        prop.getDono().setSaldo(prop.getDono().getSaldo() + pagador.getSaldo());
+                        pagador.setSaldo(0);
+                        jogadores.remove(pagador);
+                    }
                 }
             }
         }

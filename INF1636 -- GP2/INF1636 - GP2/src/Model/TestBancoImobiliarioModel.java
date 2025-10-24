@@ -67,14 +67,13 @@ public class TestBancoImobiliarioModel {
     public void testDeslocarPiaoLancandoDados() {
         jogo.iniciarJogo();
         Jogador jogadorA = jogo.getJogadores().get(0);
-        assertEquals(0, jogadorA.getPosicao()); // Verifica a posicao inicial
+        jogadorA.setPosicao(18);
         
         int[] dados = jogo.lancarDados();
         
         int posicao_antes = jogadorA.getPosicao();
         jogo.deslocarPiao(jogadorA, dados[0]+dados[1]);
-        // No tabuleiro atual, que tem 5 propriedades (indices 0 a 4), andar 5 casas a partir do 0 deve resultar em posicao 0.
-        assertEquals((posicao_antes+dados[0]+dados[1])%5, jogadorA.getPosicao()); 
+        assertEquals((posicao_antes+dados[0]+dados[1])%jogo.getTabuleiro().getCampos().size(), jogadorA.getPosicao()); 
     }
 
     
@@ -86,7 +85,7 @@ public class TestBancoImobiliarioModel {
     public void testDeslocarPiaoComVoltaNoTabuleiro() {
         jogo.iniciarJogo();
         Jogador jogadorA = jogo.getJogadores().get(0);
-        int tamanhoTabuleiro = jogo.getTabuleiro().getPropriedades().size(); // No seu codigo atual,  5
+        int tamanhoTabuleiro = jogo.getTabuleiro().getCampos().size(); // No seu codigo atual,  5
 
         // Coloca o jogador perto do fim do tabuleiro para forçar a volta
         jogadorA.setPosicao(tamanhoTabuleiro - 2); // Posicao 3 (de 0-4)
@@ -109,8 +108,8 @@ public class TestBancoImobiliarioModel {
         Jogador jogadorA = jogo.getJogadores().get(0); // O inquilino
         Jogador jogadorB = jogo.getJogadores().get(1); // O proprietario
 
-        int posicaoAlvo = 0;
-        Terreno terreno = (Terreno) jogo.getTabuleiro().getPropriedade(posicaoAlvo);
+        int posicaoAlvo = 1; //Leblon
+        Terreno terreno = (Terreno) jogo.getTabuleiro().getCampo(posicaoAlvo);
         terreno.setDono(jogadorB);
 
 
@@ -119,7 +118,7 @@ public class TestBancoImobiliarioModel {
 
         // --- Cenario: Construi uma casa e paga aluguel ---
         terreno.setNumCasas(1);
-        jogadorA.setPosicao(4);
+        jogadorA.setPosicao(0);
         jogo.deslocarPiao(jogadorA, 1);
      
 
@@ -137,11 +136,10 @@ public class TestBancoImobiliarioModel {
         jogo.iniciarJogo();
         Jogador jogadorA = jogo.getJogadores().get(0);
 
-        // Move o jogador para a propriedade de indice 2 (Av. Paulista no seu codigo)
-        int posicaoAlvo = 2;
+        int posicaoAlvo = 3;
         jogadorA.setPosicao(posicaoAlvo);
 
-        Propriedade propriedadeAlvo = jogo.getTabuleiro().getPropriedade(posicaoAlvo);
+        Propriedade propriedadeAlvo = (Propriedade) jogo.getTabuleiro().getCampo(posicaoAlvo);
         int saldoInicial = jogadorA.getSaldo();
 
         // Jogador A tenta comprar a propriedade na posi��o em que est�
@@ -167,7 +165,7 @@ public class TestBancoImobiliarioModel {
         int posicaoAlvo = 1; // Posicao da "Rua XV"
         jogadorA.setPosicao(posicaoAlvo);
 
-        Propriedade propriedadeAlvo = jogo.getTabuleiro().getPropriedade(posicaoAlvo);
+        Propriedade propriedadeAlvo = (Propriedade) jogo.getTabuleiro().getCampo(posicaoAlvo);
         propriedadeAlvo.setDono(jogadorB); // Jogador B ja é o dono
 
         int saldoInicialA = jogadorA.getSaldo();
@@ -194,7 +192,7 @@ public class TestBancoImobiliarioModel {
         int posicaoAlvo = 3; // Rua das Flores
         jogadorA.setPosicao(posicaoAlvo);
 
-        Terreno terreno = (Terreno) jogo.getTabuleiro().getPropriedade(posicaoAlvo);
+        Terreno terreno = (Terreno) jogo.getTabuleiro().getCampo(posicaoAlvo);
         terreno.setDono(jogadorA); // Jogador A � o dono
 
         int saldoInicial = jogadorA.getSaldo();
@@ -221,7 +219,7 @@ public class TestBancoImobiliarioModel {
         int posicaoAlvo = 4; // Av. Central
         jogadorA.setPosicao(posicaoAlvo);
 
-        Terreno terreno = (Terreno) jogo.getTabuleiro().getPropriedade(posicaoAlvo);
+        Terreno terreno = (Terreno) jogo.getTabuleiro().getCampo(posicaoAlvo);
         terreno.setDono(jogadorB); // Jogador B  dono
 
         int saldoInicialA = jogadorA.getSaldo();
@@ -332,11 +330,11 @@ public class TestBancoImobiliarioModel {
         Jogador jogadorB = jogo.getJogadores().get(1); // O propriet�rio
 
         // Configura o cenario de falencia
-        int posicaoAlvo = 0;
+        int posicaoAlvo = 1;
         jogadorA.setPosicao(posicaoAlvo);
         jogadorA.setSaldo(49); // Saldo baixo e insuficiente (aluguel está mockado como 50)
 
-        Terreno terreno = (Terreno) jogo.getTabuleiro().getPropriedade(posicaoAlvo);
+        Terreno terreno = (Terreno) jogo.getTabuleiro().getCampo(posicaoAlvo);
         terreno.setDono(jogadorB);
         terreno.setNumCasas(4); // For�a um aluguel alto (no caso, 100 * (4+1) = 500)
 
